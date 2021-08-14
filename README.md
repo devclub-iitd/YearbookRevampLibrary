@@ -17,13 +17,13 @@ This repository contains the development code for the YearbookCV package
 
 * **To Crop Images:**
   You can choose from 3 different versions:
-  1. Pass the path of a single image file - `img_file_src` ;specify the `size` of the image as int (length of collage square edge); specify the `output_path` [If None passed will return image as cv2 file]; specify `make_circle`, True od False to make individual images circle ;  `remove_background` specify to remove background or not [Default is False] and then execute the following code-
+  1. Pass the path of a single image file - `img_file_src` ;specify the `size` of the image as tuple of (length,breadth); specify the `output_path` [If None passed will return image as cv2 file]; specify `make_circle`, True od False to make individual images circle ;  `remove_background` specify to remove background or not [Default is False] and then execute the following code-
   ```python
   from YearbookCV.Cartoon import CropBody
   CropBody(r'input_path', r'size', r'output_path', r'makeCircle',r'removeBackground')
   ```
 
-  2. Pass the path of a single image file - `img_file_src` ;specify the `size` of the image as int (length of collage square edge); specify the `output_path` [If None passed will return image as cv2 file]; specify `make_circle`, True od False to make individual images circle and then execute the following code-
+  2. Pass the path of a single image file - `img_file_src` ;specify the `size` of the image as  tuple of (length,breadth); specify the `output_path` [If None passed will return image as cv2 file]; specify `make_circle`, True od False to make individual images circle and then execute the following code-
   ```python
   from YearbookCV.Cartoon import CropFace
   CropFace(r'input_path', r'size', r'output_path', r'makeCircle')
