@@ -7,7 +7,7 @@ setup(
   author = 'Dev Club IITD',                   
   author_email = 'devclub.iitd@gmail.com',      
   url = 'https://github.com/devclub-iitd/YearbookRevampLibrary',   
-  download_url = 'https://github.com/devclub-iitd/YearbookRevampLibrary/archive/refs/tags/0.2.tar.gz',    
+  download_url = 'https://github.com/devclub-iitd/YearbookRevampLibrary/archive/refs/tags/0.1.tar.gz',    
   keywords = ['PoseDetector', 'AutoAligner', 'BackgroundRemover', 'MosaicMaker', 'CollageMaker','CropImages'],  
   install_requires=[            
             'absl-py==0.13.0',
