@@ -3,7 +3,7 @@ import random
 import os
 import cv2
 import operator
-from Crop import CropBody
+from YearbookRevampLibrary.Crop import CropBody
 
 
 def dist(a, b, c, d):
