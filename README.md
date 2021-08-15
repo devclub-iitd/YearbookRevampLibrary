@@ -3,7 +3,7 @@ This repository contains the development code for the YearbookCV package
 
 ## Package installation:
 1. Open the command prompt
-2. Run `pip install git+https://github.com/VanshKachhwal/YearbookCV` in the cmd prompt
+2. Run `pip install git+https://github.com/devclub-iitd/YearbookRevampLibrary` in the cmd prompt
 
 ## Various Functions:
 * **To Remove Background:**
