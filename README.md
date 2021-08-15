@@ -1,6 +1,4 @@
-<<<<<<< HEAD
-# YearbookRevampLibrary
-=======
+
 # YearbookRevampLibrary
 This repository contains the development code for the YearbookRevampLibrary package
 
@@ -96,4 +94,4 @@ This repository contains the development code for the YearbookRevampLibrary pack
   YearbookRevampLibrary.createMosaic(target_image, input_images_folder , grid_size, output_filename)
   ```
   *Note that the output image is generated in jpeg format.*
->>>>>>> master
+
