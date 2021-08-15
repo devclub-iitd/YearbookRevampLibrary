@@ -42,7 +42,7 @@ def SimpleCollage(inputPath,outputPath,size,makeCircle = True,array = None,remov
             if array[row,col] == 1:
 
                 img_out = CropBody(inputPath + "\\" + images_files[i], 2*radius,makeCircle=makeCircle,removeBackground=removeBackground)
-                x_locn = int((row+0.5)*rowsize)
+                x_locn = int((row + 0.5)*rowsize)
                 y_locn = int((col + 0.5) * colsize)
                 final_img[x_locn-radius:x_locn+radius,y_locn-radius:y_locn+radius,] = img_out
                 i+=1
