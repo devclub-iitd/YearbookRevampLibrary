@@ -1,7 +1,7 @@
 from distutils.core import setup
 setup(
-  name = 'YearbookCV',         
-  packages = ['YearbookCV'],   
+  name = 'YearbookRevampLibrary',         
+  packages = ['YearbookRevampLibrary'],   
   version = '0.1',     
   description = 'Image processing library using opencv and mediapipe for YearBook of IITD',  
   author = 'Dev Club IITD',                   

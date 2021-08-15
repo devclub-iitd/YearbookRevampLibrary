@@ -1,7 +1,7 @@
 import os
 import cv2 as cv
 import mediapipe as mp
-from YearbookCV.utils import makeFolder, collect_image_files
+from YearbookRevampLibrary.utils import makeFolder, collect_image_files
 
 
 class AutoAligner():
