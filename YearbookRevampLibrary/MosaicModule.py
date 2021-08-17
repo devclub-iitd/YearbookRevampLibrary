@@ -3,7 +3,7 @@ import os, random, argparse
 from PIL import Image
 import numpy as np
 
-def createMosaic(target_image,input_images, grid_size,output_filename,list=False):
+def createMosaic(target_image,input_images, grid_size,output_filename,isList=False):
 
     """
     :param target_image: the image whose mosaic is to be generated.
@@ -106,7 +106,7 @@ def createMosaic(target_image,input_images, grid_size,output_filename,list=False
 
     # # input images
     # print('reading input folder...')
-    if(list==False):
+    if(isList==False):
         input_images = getImages(input_images)
     else :
         input_images = input_images 
