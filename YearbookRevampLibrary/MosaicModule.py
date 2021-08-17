@@ -3,7 +3,13 @@ import os, random, argparse
 from PIL import Image
 import numpy as np
 
-def CreateMosaic(target_image,input_images, grid_size,output_filename):
+def createMosaic(target_image,input_images, grid_size,output_filename):
+    """Create mosaic image
+    :param target_image: the image whose mosaic is to be generated.
+    :param input_images: the list/folder of the images that we want to use to generate the mosaic.
+    :param grid_size: tuple containing the number of images we want along the height and breadth of mosaic respectively.
+    :param output_filename: filename of the generated mosaic
+    """
     # parser = argparse.ArgumentParser(description='Creates a photomosaic from input images')
     # parser.add_argument('--target', dest='target', required=True, help="Image to create mosaic from")
     # parser.add_argument('--images', dest='images', required=True, help="Diectory of images")
