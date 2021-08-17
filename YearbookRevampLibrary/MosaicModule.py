@@ -3,22 +3,15 @@ import os, random, argparse
 from PIL import Image
 import numpy as np
 
-def createMosaic(target_image,input_images, grid_size,output_filename):
-    """Create mosaic image
+def createMosaic(target_image,input_images, grid_size,output_filename,list=False):
+
+    """
     :param target_image: the image whose mosaic is to be generated.
     :param input_images: the list/folder of the images that we want to use to generate the mosaic.
     :param grid_size: tuple containing the number of images we want along the height and breadth of mosaic respectively.
     :param output_filename: filename of the generated mosaic
     """
-    # parser = argparse.ArgumentParser(description='Creates a photomosaic from input images')
-    # parser.add_argument('--target', dest='target', required=True, help="Image to create mosaic from")
-    # parser.add_argument('--images', dest='images', required=True, help="Diectory of images")
-    # parser.add_argument('--grid', nargs=2, dest='grid', required=True, help="Size of photo mosaic")
-    # parser.add_argument('--output', dest='output', required=False)
-
-    # args = parser.parse_args()
-
-
+    
     def getImages(images_directory):
         files = os.listdir(images_directory)
         images = []
@@ -113,8 +106,10 @@ def createMosaic(target_image,input_images, grid_size,output_filename):
 
     # # input images
     # print('reading input folder...')
-    input_images = getImages(input_images)
-
+    if(list==False):
+        input_images = getImages(input_images)
+    else :
+        input_images = input_images 
     # check if any valid input images found
     if input_images == []:
         # print('No input images found in %s. Exiting.' % (args.images,))
@@ -123,13 +118,6 @@ def createMosaic(target_image,input_images, grid_size,output_filename):
     # shuffle list - to get a more varied output?
     random.shuffle(input_images)
 
-    # size of grid
-    # grid_size = (int(args.grid[0]), int(args.grid[1]))
-
-    # output
-    # output_filename = 'mosaic.jpeg'
-    # if args.output:
-    #     output_filename = args.output
 
     # re-use any image in input
     reuse_images = True
@@ -162,5 +150,4 @@ def createMosaic(target_image,input_images, grid_size,output_filename):
     # write out mosaic
     mosaic_image.save(f'{output_filename}.jpeg', 'jpeg')
 
-    # print("saved output to %s" % (output_filename,))
-    # print('done.')
+
