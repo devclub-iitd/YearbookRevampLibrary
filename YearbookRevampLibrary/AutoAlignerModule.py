@@ -1,7 +1,7 @@
 import os
 import cv2 as cv
 import mediapipe as mp
-from YearbookRevampLibrary.utils import makeFolder, collect_image_files
+from YearbookRevampLibrary.utils import output_image_files, collect_image_files
 
 
 class AutoAligner():
@@ -61,18 +61,20 @@ class AutoAligner():
             return image
 
 
-def auto_align(input_file, output_file, min_face_detection_confidence=0.5, min_pose_detection_confidence=0.5):
+def auto_align(cv2_list = None, input_path = None, output_path = None, min_face_detection_confidence=0.5, min_pose_detection_confidence=0.5):
     """
-    :param input_file: file containing images
-    :param output_file: file to store aligned images
+    :param cv2_list: list of cv2 objects to be aligned
+    :param input_path: path of the folder containing images
+    :param output_path: path of the folder to save aligned images 
     :param min_face_detection_confidence: confidence for face detection in the image
     :param min_pose_detection_confidence: confidence for pose detection in the image
-
+    :return: list of aligned cv2 objects 
     """
-    images = collect_image_files(input_file)
+    images, filenames = collect_image_files(cv2_list, input_path)
     # makeFolder(output_file)
 
-    path = output_file
+    path = output_path
+    refined_images = []
 
     mp_drawing = mp.solutions.drawing_utils
     mp_pose = mp.solutions.pose
@@ -83,8 +85,7 @@ def auto_align(input_file, output_file, min_face_detection_confidence=0.5, min_p
 
         for idx, file in enumerate(images):
 
-            image = cv.imread(input_file + "\\" + file)
-            filename, file_ext = os.path.splitext(images[idx])
+            image = images[idx]
             image_height, image_width, _ = image.shape
 
             results = pose.process(cv.cvtColor(image, cv.COLOR_BGR2RGB))
@@ -98,10 +99,7 @@ def auto_align(input_file, output_file, min_face_detection_confidence=0.5, min_p
                                                          min_detection_confidence=min_face_detection_confidence) as face_detection:
 
                         if i == 4:
-                            try:
-                                cv.imwrite(path + '\\' + filename + file_ext, image)
-                            except:
-                                cv.imwrite(path + '\\' + filename + ".png", image)
+                            refined_images.append(image)
                             break
 
                         results2 = face_detection.process(cv.cvtColor(image, cv.COLOR_BGR2RGB))
@@ -111,10 +109,7 @@ def auto_align(input_file, output_file, min_face_detection_confidence=0.5, min_p
                             image = cv.rotate(image, rotateCode=0)
                             continue
 
-                        try:
-                            cv.imwrite(path + '\\' + filename + file_ext, image)
-                        except:
-                            cv.imwrite(path + '\\' + filename + ".png", image)
+                        refined_images.append(image)
                         break
 
                 continue
@@ -132,7 +127,8 @@ def auto_align(input_file, output_file, min_face_detection_confidence=0.5, min_p
             else:
                 image = cv.rotate(image, rotateCode=2)
 
-            try:
-                cv.imwrite(path + '\\' + filename + file_ext, image)
-            except:
-                cv.imwrite(path + '\\' + filename + ".png", image)
+            refined_images.append(image)
+        
+        output = output_image_files(refined_images, output_path, filenames)
+        return output
+            

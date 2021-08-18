@@ -2,7 +2,8 @@ import os
 import cv2 as cv
 import mediapipe as mp
 import numpy as np
-from YearbookRevampLibrary.utils import makeFolder, collect_image_files
+from YearbookRevampLibrary.utils import output_image_files, collect_image_files
+
 
 
 class SelfiSegmentation():
@@ -36,28 +37,30 @@ class SelfiSegmentation():
         return imgOut
 
 
-def remove_background(input_file, output_file, background_img=(255, 255, 255), model=0, threshold=0.1):
+def remove_background(cv2_list = None, input_path = None, output_path = None, background_img=(255, 255, 255), model=0, threshold=0.1):
     """
-    :param input_file: file containing images
-    :param output_file: file to store background removed images
+    :param cv2_list: list of cv2 objects 
+    :param input_path: path of the folder containing images
+    :param output_path: path of the folder to save background removed images
     :param background_img: image to set for the background
     :param model: model type 0 or 1. 0 is general 1 is landscape(faster)
     :param threshold: higher = more cut, lower = less cut
+    :return: list of cv2 objects with background removed
     """
 
-    images = collect_image_files(input_file)
+    images, filenames = collect_image_files(cv2_list, input_path)
+    refined_images = []
     # makeFolder(output_file)
 
     segmentor = SelfiSegmentation(model)
 
-    path = output_file
     for idx, file in enumerate(images):
 
-        img = cv.imread(input_file + "\\" + file)
-        filename, file_ext = os.path.splitext(images[idx])
+        img = images[idx]
         imgOut = segmentor.removeBG(img, background_img, threshold)
 
-        try:
-            cv.imwrite(path + '\\' + filename + file_ext, imgOut)
-        except:
-            cv.imwrite(path + '\\' + filename + ".png", imgOut)
+        refined_images.append(imgOut)
+
+    output = output_image_files(refined_images, output_path, filenames)
+    return output
+    
