@@ -44,8 +44,17 @@ class PoseDetector():
         return img
 
     def findPosition(self, img, draw=True, bboxWithHands=False):
+        """
+        Find the positions of the landmarks and a surrounding box around human.
+        :param img: Image to find the landmarks and background box in.
+        :param draw: Flag to draw the output on the image.
+        :bboxWithHands: Boolean to include hands in the background box.
+        :return: landmarks list, background box dict and image.
+        """
         self.lmList = []
         self.bboxInfo = {}
+        imgRGB = cv.cvtColor(img, cv.COLOR_BGR2RGB)
+        self.results = self.pose.process(imgRGB)
         if self.results.pose_landmarks:
             for id, lm in enumerate(self.results.pose_landmarks.landmark):
                 h, w, c = img.shape
@@ -75,7 +84,7 @@ class PoseDetector():
                 cv.rectangle(img, bbox, (255, 0, 255), 3)
                 cv.circle(img, (cx, cy), 5, (255, 0, 0), cv.FILLED)
 
-        return self.lmList, self.bboxInfo
+        return self.lmList, self.bboxInfo, img
 
     def findAngle(self, img, p1, p2, p3, draw=True):
         """
@@ -86,8 +95,16 @@ class PoseDetector():
         :param p2: Point2 - Index of Landmark 2.
         :param p3: Point3 - Index of Landmark 3.
         :param draw:  Flag to draw the output on the image.
-        :return:
+        :return: angle between the given points and the image
         """
+        self.lmList = []
+        imgRGB = cv.cvtColor(img, cv.COLOR_BGR2RGB)
+        self.results = self.pose.process(imgRGB)
+        if self.results.pose_landmarks:
+            for id, lm in enumerate(self.results.pose_landmarks.landmark):
+                h, w, c = img.shape
+                cx, cy = int(lm.x * w), int(lm.y * h)
+                self.lmList.append([id, cx, cy])
 
         # Get the landmarks
         x1, y1 = self.lmList[p1][1:]
@@ -112,4 +129,4 @@ class PoseDetector():
             cv.circle(img, (x3, y3), 15, (0, 0, 255), 2)
             cv.putText(img, str(int(angle)), (x2 - 50, y2 + 50),
                         cv.FONT_HERSHEY_PLAIN, 2, (0, 0, 255), 2)
-        return angle
+        return angle, img
