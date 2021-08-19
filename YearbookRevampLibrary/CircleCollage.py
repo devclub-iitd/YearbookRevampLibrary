@@ -4,6 +4,7 @@ import os
 import cv2
 import operator
 from YearbookRevampLibrary.Crop import CropBody
+from YearbookRevampLibrary.utils import output_image_files, collect_image_files
 
 
 def dist(a, b, c, d):
@@ -88,17 +89,17 @@ class Circle:
                     TotalFalse += 1
         return TotalFalse
 
-def MakeCircleCollage(inputPath,TemplateFile,outputPath,filename = "Collage.png"):
+def MakeCircleCollage(TemplateFile,cv2_list = None, input_path = None, output_path = None,filename = "Collage.png"):
     """
-
-        :param inputPath: image folder path
-        :param outputPath: output folder path
         :param TemplateFile: Image file, used to make collage(Image file in black and white, white spots are places where circles will be made)
+        :param cv2_list: list of cv2
+        :param input_path: image folder path
+        :param output_path: output folder path
         :param filename: Filename of the final collage, by default "Collage.png"
         """
     TotalFalse = 0
     CircleList = []
-    TotalCircles = 2*len(os.listdir(inputPath))
+    TotalCircles = 2*len(os.listdir(input_path))
 
 
     TemplateImg = cv2.imread(TemplateFile)
@@ -137,9 +138,12 @@ def MakeCircleCollage(inputPath,TemplateFile,outputPath,filename = "Collage.png"
 
 
     i = 0
-    for file in os.listdir(inputPath):
-        img_initial = cv2.imread(inputPath + "\\" + file)
-        img_out = CropBody(inputPath + "\\" + file, 2 * CircleList[i].r,makeCircle=True)
+    images, filenames = collect_image_files(cv2_list, input_path)    
+    
+    final_output = []
+
+    for img_initial in images:
+        img_out = CropBody(None,size= 2 * CircleList[i].r,output_path=None,makeCircle=True,removeBackground=False,img_file= img_initial)
         img_out = cv2.cvtColor(img_out,cv2.COLOR_BGR2BGRA)
         img_out = cv2.rotate(img_out, cv2.cv2.ROTATE_90_COUNTERCLOCKWISE)
         for row in range(2 * CircleList[i].r):
@@ -150,25 +154,23 @@ def MakeCircleCollage(inputPath,TemplateFile,outputPath,filename = "Collage.png"
         i+=1
 
     BlankImg = cv2.rotate(BlankImg, cv2.cv2.ROTATE_90_CLOCKWISE)
-    # BlankImg = cv2.rotate(BlankImg, cv2.cv2.ROTATE_90_CLOCKWISE)
-    # BlankImg = cv2.rotate(BlankImg, cv2.cv2.ROTATE_90_CLOCKWISE)
+
 
     BlankImg = cv2.flip(BlankImg, 1)
+    
+    output = output_image_files([BlankImg], output_path, [[filename,"png"]])
+    return output
 
-    try:
-        cv2.imwrite(os.path.join(outputPath + "\\ " + filename), BlankImg)
-    except:
-        cv2.imwrite(os.path.join(outputPath + "\\ " + filename + ".png"), BlankImg)
 
 
 if __name__ == "__main__":
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     os.chdir(BASE_DIR)
 
-    inputPath = os.path.join(BASE_DIR + "\\Input")
-    outputPath = os.path.join(BASE_DIR + "\\Output")
+    input_path = os.path.join(BASE_DIR + "\\Input")
+    output_path = os.path.join(BASE_DIR + "\\Output")
     TemplateFile = os.path.join(BASE_DIR + "\\Bitmap.png")
 
-    MakeCircleCollage(inputPath,TemplateFile,outputPath)
+    MakeCircleCollage(TemplateFile,None,input_path,output_path)
 
 
