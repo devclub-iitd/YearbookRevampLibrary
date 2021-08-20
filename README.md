@@ -84,25 +84,25 @@ This repository contains the development code for the YearbookRevampLibrary pack
   This function named  ```CreateMosaic```  is used to create mosaic of a given target image using multiple images.
 
   It takes in arguments in the following order:</br>
-    target_image: the image whose mosaic is to be generated (Path of the image has to be entered in this parameter).
+    ```target_image```: the image whose mosaic is to be generated (Path of the image has to be entered in this parameter).
     
-    input_images: the list/folder of the images that we want to use to generate the mosaic.
+    ```input_images```: the list/folder of the images that we want to use to generate the mosaic.
     
-    grid_size: tuple containing the number of images we want along the height and breadth of mosaic respectively.
+    ```grid_size```: tuple containing the number of images we want along the height and breadth of mosaic respectively.
     
-    output_filename: string containing the filename of the generated mosaic
+    ```output_filename```: string containing the filename of the generated mosaic
     
-    output_path: string containing the required path where the generated mosaic is to be saved (optional argument)
+    ```output_path```: string containing the required path where the generated mosaic is to be saved (optional argument)
     
-    is_folder_input: a boolean specify whether the input images are passed to the function as a folder or list (True means a folder is passed, default value is set to False)
+    ```is_folder_input```: a boolean specify whether the input images are passed to the function as a folder or list (True means a folder is passed, default value is set to False)
     
-    reuse_images: a boolean to specify whether we want input images to be reused to create the mosaic(optional argument , by default set to True )
+    ```reuse_images```: a boolean to specify whether we want input images to be reused to create the mosaic(optional argument , by default set to True )
 
   The grid size is a tuple and contains number of rows and columns respectively in the given mosaic.</br>
   For example : grid size of (25,40) means 25 images along the height and 40 images along the breadth of the mosaic. So, the resulting mosaic will comprise of 25*40 images.
    
   This function returns the generated mosaic image and it can also be saved by entering the output_path and ouput_filename in the parameters.
-   
+
   In order to implemenet this function just use the following code:
   ```python
   import YearbookRevampLibrary
