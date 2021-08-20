@@ -3,15 +3,19 @@ import os, random, argparse
 from PIL import Image
 import numpy as np
 
-def createMosaic(target_image,input_images, grid_size,output_filename,isList=False):
+
+def CreateMosaic(target_image,input_images,grid_size, output_filename=None, output_path=None, is_folder_input=False ,reuse_images=True):
 
     """
-    :param target_image: the image whose mosaic is to be generated.
+    :param target_image: the image whose mosaic is to be generated (Path of the image has to be entered in this parameter).
     :param input_images: the list/folder of the images that we want to use to generate the mosaic.
     :param grid_size: tuple containing the number of images we want along the height and breadth of mosaic respectively.
-    :param output_filename: filename of the generated mosaic
+    :param output_filename: string containing the filename of the generated mosaic
+    :param output_path: string containing the required path where the generated mosaic is to be saved (optional argument)
+    :param is_folder_input: a boolean specify whether the input images are passed to the function as a folder or list (True means a folder is passed, default value is set to False)
+    :param reuse_images: a boolean to specify whether we want input images to be reused to create the mosaic(optional argument , by default set to True )
+    :return: generated mosaic image as a numpy array
     """
-    
     def getImages(images_directory):
         files = os.listdir(images_directory)
         images = []
@@ -27,7 +31,7 @@ def createMosaic(target_image,input_images, grid_size,output_filename,isList=Fal
                 print("Invalid image: %s" % (filePath,))
         return (images)
 
-
+    
     def getAverageRGB(image):
         im = np.array(image)
         w, h, d = im.shape
@@ -101,12 +105,12 @@ def createMosaic(target_image,input_images, grid_size,output_filename,isList=Fal
 
     ### ---------------------------------------------
 
-
+    
     target_image = Image.open(target_image)
-
-    # # input images
-    # print('reading input folder...')
-    if(isList==False):
+    
+    # input images
+    
+    if(is_folder_input==True):
         input_images = getImages(input_images)
     else :
         input_images = input_images 
@@ -119,8 +123,7 @@ def createMosaic(target_image,input_images, grid_size,output_filename,isList=Fal
     random.shuffle(input_images)
 
 
-    # re-use any image in input
-    reuse_images = True
+   
 
     # resize the input to fit original image size?
     resize_input = True
@@ -146,8 +149,10 @@ def createMosaic(target_image,input_images, grid_size,output_filename,isList=Fal
 
     # create photomosaic
     mosaic_image = createPhotomosaic(target_image, input_images, grid_size, reuse_images)
-
+    
     # write out mosaic
-    mosaic_image.save(f'{output_filename}.jpeg', 'jpeg')
-
+    if(output_path!=None): 
+        mosaic_image.save(f'{output_path}/{output_filename}.jpeg', 'jpeg')
+    
+    return mosaic_image
 
