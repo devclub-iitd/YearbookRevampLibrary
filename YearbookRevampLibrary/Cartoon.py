@@ -1,7 +1,7 @@
 import cv2
 import os
 import numpy as np
-
+from YearbookRevampLibrary.utils import output_image_files, collect_image_files
 
 
 def edge_mask(img, line_size, blur_value):
@@ -28,17 +28,21 @@ def ColourQuantization(image, K=9):
     res2 = res.reshape((image.shape))
     return res2
 
-def BlurredCartoonFilter(inputPath, outputPath):
+def BlurredCartoonFilter(cv2_list = None, input_path = None, output_path = None):
     """
+        :param cv2_list: list of cv2 objects 
+        :param input_path: image folder path
 
-        :param inputPath: image folder path
-
-        :param outputPath: output folder path
+        :param output_path: output folder path
+        :return: list of cv2 objects 
 
 
         """
-    for file in os.listdir(inputPath):
-        img = cv2.imread(inputPath + "\\" + file)
+    images, filenames = collect_image_files(cv2_list, input_path)    
+    
+    final_output = []
+
+    for img in images:
         line_size = 7
         blur_value = 7
         edges = edge_mask(img, line_size, blur_value)
@@ -52,40 +56,40 @@ def BlurredCartoonFilter(inputPath, outputPath):
         result = result.reshape(img.shape)
         blurred = cv2.bilateralFilter(result, d=10, sigmaColor=250, sigmaSpace=250)
         cartoon = cv2.bitwise_and(blurred, blurred, mask=edges)
+        final_output.append(cartoon)
 
-        try:
-            cv2.imwrite(outputPath + "\\" + file , cartoon)
-        except:
-            cv2.imwrite(outputPath + "\\" + file+ ".png", cartoon)
+    output = output_image_files(final_output, output_path, filenames)
+    return output
 
-def CartoonFilter(inputPath, outputPath):
+def CartoonFilter(cv2_list = None, input_path = None, output_path = None):
     """
+        :param cv2_list: list of cv2 objects 
+        :param input_path: image folder path
 
-        :param inputPath: image folder path
-
-        :param outputPath: output folder path
+        :param output_path: output folder path
+        :return: list of cv2 objects 
 
 
         """
-    for file in os.listdir(inputPath):
-        image = cv2.imread(inputPath + "\\" + file)
+    images, filenames = collect_image_files(cv2_list, input_path)    
+    
+    final_output = []
+    for image in images:
         coloured = ColourQuantization(image)
         contoured = Countours(coloured)
         final_image = contoured
 
-        try:
-            cv2.imwrite(outputPath + "\\" + file, final_image)
-        except:
-            cv2.imwrite(outputPath + "\\" + file + ".png", final_image)
-        # if not cv2.imwrite(outputPath + "\\" + file , final_image):
-        #     cv2.imwrite(outputPath + "\\" + file+ ".png", final_image)
+        final_output.append(final_image)
+
+    output = output_image_files(final_output, output_path, filenames)
+    return output
 
 if __name__ == "__main__":
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     os.chdir(BASE_DIR)
 
-    inputPath = os.path.join(BASE_DIR + "\\Input")
-    outputPath = os.path.join(BASE_DIR + "\\Output")
-    BlurredCartoonFilter(inputPath, outputPath)
+    input_path = os.path.join(BASE_DIR + "\\Input")
+    output_path = os.path.join(BASE_DIR + "\\Output")
+    CartoonFilter(cv2_list=None,input_path=input_path, output_path = output_path)
 
 

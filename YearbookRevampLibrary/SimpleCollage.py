@@ -4,23 +4,26 @@ import os
 import cv2
 import operator
 from YearbookRevampLibrary.Crop import CropBody
+from YearbookRevampLibrary.utils import output_image_files, collect_image_files
 
 
-def SimpleCollage(inputPath,outputPath,size,makeCircle = True,array = None,removeBackground = False,filename = "Collage.png"):
+
+def SimpleCollage(cv2_list = None, input_path = None, output_path = None,size = [2000,2000],makeCircle = True,array = np.ones((8,8)),removeBackground = False,filename = "Collage"):
     """
-
-        :param inputPath: image folder path
-        :param outputPath: output folder path
+        :param cv2_list: list of cv2 objects 
+        :param input_path: image folder path
+        :param output_path: output folder path
         :param size: Specify the final image size as (rows,columns) tuple
         :param array: Pass a numpy array with 1s at the position you want the image and 0s at the place to leave blank
         :param makeCircle: Crop as circle or square
         :param removeBackground: Specify removing background or not, by default false
-        :param filename: Filename of the final collage, by default "Collage.png"
-
+        :param filename: Filename of the final collage, by default "Collage"
+        :return: cv2 object
         """
-    images_files = os.listdir(inputPath)
-    if array.any() == None:
-        array = np.ones((8,8))
+    # images_files = os.listdir(input_path)
+    images, filenames = collect_image_files(cv2_list, input_path)    
+    
+    final_output = []
 
     arrayShape = array.shape
 
@@ -34,34 +37,31 @@ def SimpleCollage(inputPath,outputPath,size,makeCircle = True,array = None,remov
 
 
     i = 0
-    max = len(images_files)
+    max = len(images)
     for row in range(arrayShape[0]):
         for col in range (arrayShape[1]):
             if i >= max:
                 break
             if array[row,col] == 1:
 
-                img_out = CropBody(inputPath + "\\" + images_files[i], 2*radius,makeCircle=makeCircle,removeBackground=removeBackground)
+                img_out = CropBody(None,size= 2*radius,output_path=None,makeCircle=makeCircle,removeBackground=removeBackground,img_file= images[i])
                 x_locn = int((row+0.5)*rowsize)
                 y_locn = int((col + 0.5) * colsize)
                 final_img[x_locn-radius:x_locn+radius,y_locn-radius:y_locn+radius,] = img_out
                 i+=1
 
+    output = output_image_files([final_img], output_path, [[filename,"png"]])
+    return output
 
-
-    try:
-        cv2.imwrite(os.path.join(outputPath + "\\ "+ filename ), final_img)
-    except:
-        cv2.imwrite(os.path.join(outputPath + "\\ " + filename +".png"), final_img)
 
 if __name__ == "__main__":
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     os.chdir(BASE_DIR)
 
-    inputPath = os.path.join(BASE_DIR + "\\Input")
-    outputPath = os.path.join(BASE_DIR + "\\Output")
+    input_path = os.path.join(BASE_DIR + "\\Input")
+    output_path = os.path.join(BASE_DIR + "\\Output")
 
 
-    SimpleCollage(inputPath,outputPath,(2000,3000),True)
+    SimpleCollage(None,input_path,output_path,(2000,3000),True)
 
 

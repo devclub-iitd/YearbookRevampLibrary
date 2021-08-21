@@ -3,6 +3,7 @@ import os
 import numpy as np
 import mediapipe as mp
 import re
+from YearbookRevampLibrary.utils import output_image_files, collect_image_files
 
 class SelfiSegmentation():
 
@@ -43,18 +44,23 @@ def incircle(point, radius,makeCircle):
         return False
 
 
-def CropFace(img_file_src, size, output_path=None, makeCircle = True):
+def CropFace(img_file_src, size, output_path=None, makeCircle = True,img_file = None):
     """
 
-        :param img_file_src: image file
+        :param img_file_src: image file path
         :param size: diameter of final image
         :param output_path: output folder location(if nothing specified, return image as array)
         :param makeCircle: Crop as circle or square, By default True
+        :param img_file: Pass an image file as cv2 object, if you dont want to pass image file path, By default none
+        :return: list of cv2 objects 
 
 
         """
-
-    img_initial = cv2.imread(img_file_src)
+    # print(img_file)
+    if img_file.any() == None:
+        img_initial = cv2.imread(img_file_src)
+    else:
+        img_initial = img_file
     final_img = []
     grayImg = cv2.cvtColor(img_initial, cv2.COLOR_BGR2GRAY)
 
@@ -106,18 +112,23 @@ def CropFace(img_file_src, size, output_path=None, makeCircle = True):
             i+=1
 
 
-def CropBody(img_file_src, size, output_path=None ,makeCircle = True,removeBackground = True):
+def CropBody(img_file_src, size, output_path=None ,makeCircle = True,removeBackground = True,img_file = None):
     """
 
-        :param img_file_src: image file
+        :param img_file_src: image file path
         :param size: diameter of final image
         :param output_path: output folder location(if nothing specified, return image as array)
         :param makeCircle: Crop as circle or square, By default True
         :param removeBackground: Removing the background via mediapipe, By default True
+        :param img_file: Pass an image file as cv2 object, if you dont want to pass image file path, By default none
+        :return: cv2 object
 
 
         """
-    img = cv2.imread(img_file_src)
+    if img_file.any() == None:
+        img = cv2.imread(img_file_src)
+    else:
+        img = img_file
     rows, cols, c = img.shape
     mp_pose = mp.solutions.pose
     with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
@@ -206,43 +217,47 @@ def CropBody(img_file_src, size, output_path=None ,makeCircle = True,removeBackg
                 cv2.imwrite(output_path + "\\" + file[0] + ".png", face_img_final)
 
 
-def CropAll(inputPath, outputPath, type=0, makeCircle = True,removeBackground = True):
+def CropAll(cv2_list = None, input_path = None, output_path = None, type=0, makeCircle = True,removeBackground = True):
     """
-
-        :param inputPath: image folder path
-
-        :param outputPath: output folder path
+        :param cv2_list: list of cv2 objects
+        :param input_path: image folder path
+        :param output_path: output folder path
         :param type: type of crop, 0 to crop body, 1 to get face crop , default is 0
         :param makeCircle: Crop as circle or square, By default True
-
+        :return: list of cv2 objects 
+    
 
         """
-    for file in os.listdir(inputPath):
-        img_initial = cv2.imread(inputPath + "\\" + file)
+    images, filenames = collect_image_files(cv2_list, input_path)    
+    final_filenames = []
+    final_output = []
+    
+    
+    for img_initial,filename in zip(images,filenames):
         rows, cols, c = img_initial.shape
         size = int(min(rows, cols))
 
         if type == 0:
-            CropBody(inputPath + "\\" + file, size, outputPath,makeCircle,removeBackground)
+            Image_Out = CropBody(None, size, None ,makeCircle,removeBackground,img_initial)
+            final_output.append(Image_Out)
         else:
-            CropFace(inputPath + "\\" + file, size, outputPath,makeCircle)
+            Images_Out = CropFace(None, size, None ,makeCircle,img_initial)
+            for iindex,img_out in enumerate(Images_Out):
+                final_output.append(img_out)
+                final_filenames.append([filename[0]+ str(iindex),filename[1]])
+    if type == 0:
+        output = output_image_files(final_output, output_path, filenames)
+    else:
+        output = output_image_files(final_output, output_path, final_filenames)
+    return output
 
 
 if __name__ == "__main__":
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     os.chdir(BASE_DIR)
 
-    inputPath = os.path.join(BASE_DIR + "\\Input")
-    outputPath = os.path.join(BASE_DIR + "\\Output")
+    input_path = os.path.join(BASE_DIR + "\\Input")
+    output_path = os.path.join(BASE_DIR + "\\Output")
+    CropAll(None,input_path,output_path,0,True,False)
 
-    CropAll(inputPath,outputPath,1,True,False)
 
-
-    # for file in os.listdir(inputPath):
-    # file = os.listdir(inputPath)[0]
-    # print(file)
-    # # img_initial = cv2.imread(inputPath + "\\" + file)
-    # outImg = CropBody(inputPath + "\\" + file, 300)
-    # # outImg = outImg[0]
-    # if not cv2.imwrite(os.path.join(outputPath + "\\" + file), outImg):
-    #     raise Exception("Could not write image")
